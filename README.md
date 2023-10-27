@@ -29,7 +29,7 @@ All endpoints returns json structure
 - Target: /orderbook/<orderbookid>
 - Type: Get
 - Example: `curl http://localhost:8080/orderbook/de8bdf60-e4ea-4079-beb2-33583af248ba`
-- <details> <summary>Sample Return:</summary>
+- Sample Return:
 
 ```json
 {
@@ -67,13 +67,12 @@ All endpoints returns json structure
     }
 }
 ```
-</details>
 
 3. Get Order details
 - Target: /order/<orderid>
 - Type: Get
 - Example: `curl http://localhost:8080/order/f3cd7ee1-58cb-42e9-b7a4-179d9c3a8c5b`
-- <details> <summary>Sample Return:</summary>
+- Sample Return:
 ```json
 {
     "side": "sell",
@@ -83,7 +82,6 @@ All endpoints returns json structure
     "price": "4.5"
 }
 ```
-</details>
 
 4. Post limit order
 - Target: /order/limit
@@ -94,7 +92,7 @@ All endpoints returns json structure
     - price
     - orderbook_id
 - Example: `curl -X POST http://localhost:8080/order/limit -d "side=0,quantity=2000,price=100,orderbook_id=de8bdf60-e4ea-4079-beb2-33583af248ba"`
-- <details> <summary>Sample Return:</summary>
+- Sample Return:
 ```json
 {
     "done": null,
@@ -109,7 +107,6 @@ All endpoints returns json structure
     "quantityLeft": "0"
 }
 ```
-</details>
 
 5. Post market order
 - Target: /order/market
@@ -119,7 +116,7 @@ All endpoints returns json structure
     - quantity
     - orderbook_id
 - Example: `curl -X POST http://localhost:8080/order/market -d "side=0,quantity=2000,orderbook_id=de8bdf60-e4ea-4079-beb2-33583af248ba"`
-- <details> <summary>Sample Return:</summary>
+- Sample Return:
 ```json
 {
     "done": null,
@@ -134,13 +131,12 @@ All endpoints returns json structure
     "quantityLeft": "10980"
 }
 ```
-</details>
 
-6. <details> <p>Get Orderbook marketview
+6. Get Orderbook marketview
 - Target: /orderbook/<orderbookid>
 - Type: Get
 - Example: `curl localhost:8080/orderbook/marketview/de8bdf60-e4ea-4079-beb2-33583af248ba`
-- <summary>Sample Return:</summary>
+- Sample Return:
 ```json
 {
     "asks": {
@@ -149,5 +145,3 @@ All endpoints returns json structure
     "bids": {}
 }
 ```
-</p>
-</details>
