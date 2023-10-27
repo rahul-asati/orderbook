@@ -1,5 +1,6 @@
 # Order Booking
-This is an improved matching engine web server framework. It uses following matching engine module: https://github.com/i25959341/orderbook
+This is an improved matching engine web server framework. It uses following matching engine module: https://github.com/i25959341/orderbook.
+Refer to 'https://github.com/rahul-asati/orderbook/blob/master/orderbook/README.md' for endpoints backend function input and output details.
 
 # Setup
 1. Building from repository
@@ -15,7 +16,7 @@ Just run the build/orderbook.exe with port number as an argument on windows syst
 
 # Endpoints
 All endpoints returns json structure
-1. Create orderbook
+### Create orderbook
 - Target: /orderbook/create
 - Type: Post
 - Example: `curl http://localhost:8080/orderbook/create`
@@ -25,7 +26,7 @@ All endpoints returns json structure
     "orderbook_id": "de8bdf60-e4ea-4079-beb2-33583af248ba"
 }`
 
-2. Get Orderbook details
+### Get Orderbook details
 - Target: /orderbook/<orderbookid>
 - Type: Get
 - Example: `curl http://localhost:8080/orderbook/de8bdf60-e4ea-4079-beb2-33583af248ba`
@@ -68,7 +69,7 @@ All endpoints returns json structure
 }
 ```
 
-3. Get Order details
+### Get Order details
 - Target: /order/<orderid>
 - Type: Get
 - Example: `curl http://localhost:8080/order/f3cd7ee1-58cb-42e9-b7a4-179d9c3a8c5b`
@@ -83,7 +84,7 @@ All endpoints returns json structure
 }
 ```
 
-4. Post limit order
+### Post limit order
 - Target: /order/limit
 - Type: Post
 - Form Body:
@@ -108,7 +109,7 @@ All endpoints returns json structure
 }
 ```
 
-5. Post market order
+### Post market order
 - Target: /order/market
 - Type: Post
 - Form Body:
@@ -132,7 +133,7 @@ All endpoints returns json structure
 }
 ```
 
-6. Get Orderbook marketview
+### Get Orderbook marketview
 - Target: /orderbook/<orderbookid>
 - Type: Get
 - Example: `curl localhost:8080/orderbook/marketview/de8bdf60-e4ea-4079-beb2-33583af248ba`
