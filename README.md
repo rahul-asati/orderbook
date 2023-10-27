@@ -136,7 +136,7 @@ All endpoints returns json structure
 ```
 </details>
 
-6. <details> Get Orderbook marketview
+6. <details> <p>Get Orderbook marketview
 - Target: /orderbook/<orderbookid>
 - Type: Get
 - Example: `curl localhost:8080/orderbook/marketview/de8bdf60-e4ea-4079-beb2-33583af248ba`
@@ -149,4 +149,5 @@ All endpoints returns json structure
     "bids": {}
 }
 ```
+</p>
 </details>
