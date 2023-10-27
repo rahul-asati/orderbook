@@ -1,194 +1,152 @@
-# Go orderbook
+# Order Booking
+This is an improved matching engine web server framework. It uses following matching engine module: https://github.com/i25959341/orderbook
 
-Improved matching engine written in Go (Golang)
+# Setup
+1. Building from repository
+    - Clone the repository.
+    - Go inside repository.
+    - Run - `go mod download`
+    - Run - `go build `
+    - run - `./orderbooking <port>`
+This will start server at given port.
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/i25959341/orderbook)](https://goreportcard.com/report/github.com/i25959341/orderbook)
-[![GoDoc](https://godoc.org/github.com/i25959341/orderbook?status.svg)](https://godoc.org/github.com/i25959341/orderbook)
-[![gocover.run](https://gocover.run/github.com/i25959341/orderbook.svg?style=flat&tag=1.10)](https://gocover.run?tag=1.10&repo=github.com%2Fi25959341%2Forderbook)
-[![Stability: Active](https://masterminds.github.io/stability/active.svg)](https://masterminds.github.io/stability/active.html)
-[![Build Status](https://travis-ci.org/i25959341/orderbook.svg?branch=master)](https://travis-ci.org/i25959341/orderbook)
+2. For Windows: 
+Just run the build/orderbook.exe with port number as an argument on windows system.
 
-## Features
+# Endpoints
+All endpoints returns json structure
+1. Create orderbook
+- Target: /orderbook/create
+- Type: Post
+- Example: `curl http://localhost:8080/orderbook/create`
+- Sample Return:
+`
+{
+    "orderbook_id": "de8bdf60-e4ea-4079-beb2-33583af248ba"
+}`
 
-- Standard price-time priority
-- Supports both market and limit orders
-- Supports order cancelling
-- High performance (above 300k trades per second)
-- Optimal memory usage
-- JSON Marshalling and Unmarsalling
-- Calculating market price for definite quantity
+2. Get Orderbook details
+- Target: /orderbook/<orderbookid>
+- Type: Get
+- Example: `curl http://localhost:8080/orderbook/de8bdf60-e4ea-4079-beb2-33583af248ba`
+- <details> <summary>Sample Return:</summary>
 
-## Usage
-
-To start using order book you need to create object:
-
-```go
-import (
-  "fmt" 
-  ob "github.com/muzykantov/orderbook"
-)
-
-func main() {
-  orderBook := ob.NewOrderBook()
-  fmt.Println(orderBook)
+```json
+{
+    "asks": {
+        "numOrders": 3,
+        "depth": 1,
+        "prices": {
+            "4.5": {
+                "volume": "300",
+                "price": "4.5",
+                "orders": [
+                    {
+                        "side": "sell",
+                        "id": "7e22530d-2203-483b-8008-9b79e66d682a",
+                        "timestamp": "2023-10-27T07:15:23.8461309Z",
+                        "quantity": "100",
+                        "price": "4.5"
+                    },
+                   
+                    {
+                        "side": "sell",
+                        "id": "eba8e1b3-e4b4-44bd-bf05-3c5418f63887",
+                        "timestamp": "2023-10-27T07:15:53.9445147Z",
+                        "quantity": "100",
+                        "price": "4.5"
+                    }
+                ]
+            }
+        }
+    },
+    "bids": {
+        "numOrders": 0,
+        "depth": 0,
+        "prices": {}
+    }
 }
-
 ```
+</details>
 
-Then you be able to use next primary functions:
-
-```go
-
-func (ob *OrderBook) ProcessLimitOrder(side Side, orderID string, quantity, price decimal.Decimal) (done []*Order, partial *Order, err error) { ... }
-
-func (ob *OrderBook) ProcessMarketOrder(side Side, quantity decimal.Decimal) (done []*Order, partial *Order, quantityLeft decimal.Decimal, err error) { .. }
-
-func (ob *OrderBook) CancelOrder(orderID string) *Order { ... }
-
+3. Get Order details
+- Target: /order/<orderid>
+- Type: Get
+- Example: `curl http://localhost:8080/order/f3cd7ee1-58cb-42e9-b7a4-179d9c3a8c5b`
+- <details> <summary>Sample Return:</summary>
+```json
+{
+    "side": "sell",
+    "id": "f3cd7ee1-58cb-42e9-b7a4-179d9c3a8c5b",
+    "timestamp": "2023-10-27T11:00:36.3562441Z",
+    "quantity": "100",
+    "price": "4.5"
+}
 ```
+</details>
 
-## About primary functions
-
-### ProcessLimitOrder
-
-```go
-// ProcessLimitOrder places new order to the OrderBook
-// Arguments:
-//      side     - what do you want to do (ob.Sell or ob.Buy)
-//      orderID  - unique order ID in depth
-//      quantity - how much quantity you want to sell or buy
-//      price    - no more expensive (or cheaper) this price
-//      * to create new decimal number you should use decimal.New() func
-//        read more at https://github.com/shopspring/decimal
-// Return:
-//      error   - not nil if quantity (or price) is less or equal 0. Or if order with given ID is exists
-//      done    - not nil if your order produces ends of anoter order, this order will add to
-//                the "done" slice. If your order have done too, it will be places to this array too
-//      partial - not nil if your order has done but top order is not fully done. Or if your order is
-//                partial done and placed to the orderbook without full quantity - partial will contain
-//                your order with quantity to left
-//      partialQuantityProcessed - if partial order is not nil this result contains processed quatity from partial order
-func (ob *OrderBook) ProcessLimitOrder(side Side, orderID string, quantity, price decimal.Decimal) (done []*Order, partial *Order, err error) { ... }
+4. Post limit order
+- Target: /order/limit
+- Type: Post
+- Form Body:
+    - side - 0 for buy, 1 for sell
+    - quantity
+    - price
+    - orderbook_id
+- Example: `curl -X POST http://localhost:8080/order/limit -d "side=0,quantity=2000,price=100,orderbook_id=de8bdf60-e4ea-4079-beb2-33583af248ba"`
+- <details> <summary>Sample Return:</summary>
+```json
+{
+    "done": null,
+    "partial": {
+        "side": "sell",
+        "id": "",
+        "timestamp": "0001-01-01T00:00:00Z",
+        "quantity": "0",
+        "price": "0"
+    },
+    "partialQuantityProcessed": "0",
+    "quantityLeft": "0"
+}
 ```
+</details>
 
-For example:
+5. Post market order
+- Target: /order/market
+- Type: Post
+- Form Body:
+    - side - 0 for buy, 1 for sell
+    - quantity
+    - orderbook_id
+- Example: `curl -X POST http://localhost:8080/order/market -d "side=0,quantity=2000,orderbook_id=de8bdf60-e4ea-4079-beb2-33583af248ba"`
+- <details> <summary>Sample Return:</summary>
+```json
+{
+    "done": null,
+    "partial": {
+        "side": "sell",
+        "id": "",
+        "timestamp": "0001-01-01T00:00:00Z",
+        "quantity": "0",
+        "price": "0"
+    },
+    "partialQuantityProcessed": "0",
+    "quantityLeft": "10980"
+}
 ```
-ProcessLimitOrder(ob.Sell, "uinqueID", decimal.New(55, 0), decimal.New(100, 0))
+</details>
 
-asks: 110 -> 5      110 -> 5
-      100 -> 1      100 -> 56
---------------  ->  --------------
-bids: 90  -> 5      90  -> 5
-      80  -> 1      80  -> 1
-
-done    - nil
-partial - nil
-
+6. Get Orderbook marketview
+- Target: /orderbook/<orderbookid>
+- Type: Get
+- Example: `curl localhost:8080/orderbook/marketview/de8bdf60-e4ea-4079-beb2-33583af248ba`
+- <details> <summary>Sample Return:</summary>
+```json
+{
+    "asks": {
+        "4.5": "100"
+    },
+    "bids": {}
+}
 ```
-
-```
-ProcessLimitOrder(ob.Buy, "uinqueID", decimal.New(7, 0), decimal.New(120, 0))
-
-asks: 110 -> 5
-      100 -> 1
---------------  ->  --------------
-bids: 90  -> 5      120 -> 1
-      80  -> 1      90  -> 5
-                    80  -> 1
-
-done    - 2 (or more orders)
-partial - uinqueID order
-
-```
-
-```
-ProcessLimitOrder(ob.Buy, "uinqueID", decimal.New(3, 0), decimal.New(120, 0))
-
-asks: 110 -> 5
-      100 -> 1      110 -> 3
---------------  ->  --------------
-bids: 90  -> 5      90  -> 5
-      80  -> 1      90  -> 5
-
-done    - 1 order with 100 price, (may be also few orders with 110 price) + uinqueID order
-partial - 1 order with price 110
-
-```
-
-### ProcessMarketOrder
-
-```go
-// ProcessMarketOrder immediately gets definite quantity from the order book with market price
-// Arguments:
-//      side     - what do you want to do (ob.Sell or ob.Buy)
-//      quantity - how much quantity you want to sell or buy
-//      * to create new decimal number you should use decimal.New() func
-//        read more at https://github.com/shopspring/decimal
-// Return:
-//      error        - not nil if price is less or equal 0
-//      done         - not nil if your market order produces ends of anoter orders, this order will add to
-//                     the "done" slice
-//      partial      - not nil if your order has done but top order is not fully done
-//      partialQuantityProcessed - if partial order is not nil this result contains processed quatity from partial order
-//      quantityLeft - more than zero if it is not enought orders to process all quantity
-func (ob *OrderBook) ProcessMarketOrder(side Side, quantity decimal.Decimal) (done []*Order, partial *Order, quantityLeft decimal.Decimal, err error) { .. }
-```
-
-For example:
-```
-ProcessMarketOrder(ob.Sell, decimal.New(6, 0))
-
-asks: 110 -> 5      110 -> 5
-      100 -> 1      100 -> 1
---------------  ->  --------------
-bids: 90  -> 5      80 -> 1
-      80  -> 2
-
-done         - 2 (or more orders)
-partial      - 1 order with price 80
-quantityLeft - 0
-
-```
-
-```
-ProcessMarketOrder(ob.Buy, decimal.New(10, 0))
-
-asks: 110 -> 5
-      100 -> 1
---------------  ->  --------------
-bids: 90  -> 5      90  -> 5
-      80  -> 1      80  -> 1
-                    
-done         - 2 (or more orders)
-partial      - nil
-quantityLeft - 4
-
-```
-
-### CancelOrder
-
-```go
-// CancelOrder removes order with given ID from the order book
-func (ob *OrderBook) CancelOrder(orderID string) *Order { ... }
-```
-
-```
-CancelOrder("myUinqueID-Sell-1-with-100")
-
-asks: 110 -> 5
-      100 -> 1      110 -> 5
---------------  ->  --------------
-bids: 90  -> 5      90  -> 5
-      80  -> 1      80  -> 1
-                    
-done         - 2 (or more orders)
-partial      - nil
-quantityLeft - 4
-
-```
-
-## License
-
-The MIT License (MIT)
-
-See LICENSE and AUTHORS files
+</details>
