@@ -1,6 +1,6 @@
 # Order Booking
 This is an improved matching engine web server framework. It uses following matching engine module: https://github.com/i25959341/orderbook.
-Refer to 'https://github.com/rahul-asati/orderbook/blob/master/orderbook/README.md' for endpoints backend function input and output details.
+Refer to [orderbook](https://github.com/rahul-asati/orderbook/blob/master/orderbook/README.md) for endpoints backend function input and output details.
 
 # Setup
 1. Building from repository
